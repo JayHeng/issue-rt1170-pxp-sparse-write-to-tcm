@@ -78,8 +78,9 @@ define block ZI         with alignment = 32  { first zi, section m_usb_dma_nonin
 define block NCACHE_VAR    { section NonCacheable , section NonCacheable.init };
 define block QACCESS_CODE  { section CodeQuickAccess };
 define block QACCESS_DATA  { section DataQuickAccess };
+define block QACCESS_OCRAM  { section DataOcramAccess };
 
-initialize by copy { readwrite, section .textrw, section CodeQuickAccess, section DataQuickAccess };
+initialize by copy { readwrite, section .textrw, section CodeQuickAccess, section DataQuickAccess, section DataOcramAccess };
 do not initialize  { section .noinit };
 
 place at address mem: m_interrupts_start    { readonly section .intvec };
@@ -95,4 +96,5 @@ if (isdefinedsymbol(__heap_noncacheable__)) {
 place in NCACHE_region                      { block NCACHE_VAR };
 place in TEXT_region                        { block QACCESS_CODE };
 place in DATA_region                        { block QACCESS_DATA };
+place in DATA2_region                       { block QACCESS_OCRAM };
 place in CSTACK_region                      { block CSTACK };
