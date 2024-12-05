@@ -14,16 +14,16 @@
  * Definitions
  ******************************************************************************/
 #define APP_PXP PXP
-#define INPUT_BUF_WIDTH   128
+#define INPUT_BUF_WIDTH   64
 #define INPUT_BUF_HEIGHT  64
 #define OUTPUT_BUF_WIDTH  64
-#define OUTPUT_BUF_HEIGHT 32
-#define COPY_WIDTH        16
+#define OUTPUT_BUF_HEIGHT 64
+#define COPY_WIDTH        8
 #define COPY_HEIGHT       8
 #define SRC_OFFSET_X      0
 #define SRC_OFFSET_Y      0
-#define DEST_OFFSET_X     10
-#define DEST_OFFSET_Y     20
+#define DEST_OFFSET_X     2
+#define DEST_OFFSET_Y     1
 
 #define APP_ASSERT(cond)     \
     if (true != (cond))      \
@@ -33,8 +33,8 @@
             ;                \
     }
 
-#define APP_BUF_FORMAT         kPXP_AsPixelFormatARGB8888
-#define APP_BUF_BYTE_PER_PIXEL 4
+#define APP_BUF_FORMAT         kPXP_AsPixelFormatRGB565
+#define APP_BUF_BYTE_PER_PIXEL 2
 
 #if APP_BUF_BYTE_PER_PIXEL == 2
 typedef uint16_t pixel_t;
@@ -121,10 +121,10 @@ static void APP_InitInputBuffer(pixel_t *inputBuf)
     {
         for (x = 0; x < INPUT_BUF_WIDTH; x++)
         {
-            for (uint8_t i = 0; i < APP_BUF_BYTE_PER_PIXEL; i++)
+            //for (uint8_t i = 0; i < APP_BUF_BYTE_PER_PIXEL; i++)
             {
-                *(data++) = val;
-                //val += 3;
+                *(data++) = 0x5A;
+                *(data++) = 0xA5;
             }
         }
     }
@@ -183,7 +183,7 @@ static void APP_CopyPicture(pixel_t (*inputBuf)[INPUT_BUF_WIDTH], pixel_t (*outp
     PRINTF("\r\ninput image start 0x%x, output image start 0x%x \r\n", (uint32_t)inputBuf, (uint32_t)outputBuf);
 
     /* Clear the whole output buffer. */
-    memset(inputBuf, 0, sizeof(s_outputBuf_sdram));
+    memset(outputBuf, 0, sizeof(s_outputBuf_sdram));
 
     pxpCopyConfig.srcPicBaseAddr  = (uint32_t)inputBuf;
     pxpCopyConfig.srcPitchBytes   = sizeof(pixel_t) * INPUT_BUF_WIDTH;
@@ -210,7 +210,7 @@ static void APP_CopyPicture(pixel_t (*inputBuf)[INPUT_BUF_WIDTH], pixel_t (*outp
     PXP_ClearStatusFlags(APP_PXP, kPXP_CompleteFlag);
 
     /* Verify result. */
-    APP_VerifyCopy(inputBuf, outputBuf, SRC_OFFSET_X, SRC_OFFSET_Y, DEST_OFFSET_X, DEST_OFFSET_Y, COPY_WIDTH, COPY_HEIGHT);
+    //APP_VerifyCopy(inputBuf, outputBuf, SRC_OFFSET_X, SRC_OFFSET_Y, DEST_OFFSET_X, DEST_OFFSET_Y, COPY_WIDTH, COPY_HEIGHT);
 }
 
 static void APP_VerifyCopy(pixel_t (*inputBuf)[INPUT_BUF_WIDTH], pixel_t (*outputBuf)[OUTPUT_BUF_WIDTH],

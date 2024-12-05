@@ -28,7 +28,10 @@ define symbol m_interrupts_start       = 0x00000000;
 define symbol m_interrupts_end         = 0x000003FF;
 
 define symbol m_text_start             = 0x00000400;
-define symbol m_text_end               = 0x0003FFFF;
+define symbol m_text_end               = 0x0001FFFF;
+
+define symbol m_itcm_start             = 0x00020000;
+define symbol m_itcm_end               = 0x0003FFFF;
 
 define symbol m_data_start             = 0x20000000;
 define symbol m_data_end               = 0x2003FFFF;
@@ -65,6 +68,7 @@ define exported symbol __RAM_VECTOR_TABLE_SIZE = 0x0;
 define memory mem with size = 4G;
 define region TEXT_region = mem:[from m_interrupts_start to m_interrupts_end]
                           | mem:[from m_text_start to m_text_end];
+define region ITCM_region = mem:[from m_itcm_start to m_itcm_end];
 define region DATA_region = mem:[from m_data_start to m_data_end];
 define region DATA2_region = mem:[from m_data2_start to m_data2_end];
 define region DATA3_region  = mem:[from m_data3_start to m_data3_end-__size_cstack__];
@@ -94,7 +98,7 @@ if (isdefinedsymbol(__heap_noncacheable__)) {
   place in DATA3_region                     { last block HEAP };
 }
 place in NCACHE_region                      { block NCACHE_VAR };
-place in TEXT_region                        { block QACCESS_CODE };
+place in ITCM_region                        { block QACCESS_CODE };
 place in DATA_region                        { block QACCESS_DATA };
 place in DATA2_region                       { block QACCESS_OCRAM };
 place in CSTACK_region                      { block CSTACK };
